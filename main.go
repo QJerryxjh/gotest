@@ -7,6 +7,5 @@ import (
 )
 
 func main() {
-	r := router.SetupRouter()
-	_ = r.Run()
+	router.SetupRouter()
 }
