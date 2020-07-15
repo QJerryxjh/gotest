@@ -2,7 +2,6 @@ package router
 
 import (
 	"context"
-	"fmt"
 	"gotest/dbs"
 	"log"
 	"net/http"
@@ -11,7 +10,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/gin-contrib/sessions"
+	"gotest/controller/Jwt"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,6 +19,20 @@ var Router *gin.Engine
 
 func SetupRouter() {
 	Router = gin.Default()
+
+	// Router.Use((func() gin.HandlerFunc {
+	// 	return func(ctx *gin.Context) {
+	// 		fmt.Println(1)
+	// 		ctx.Abort()
+	// 		fmt.Println(2)
+	// 	}
+	// }()), (func() gin.HandlerFunc {
+	// 	return func(ctx *gin.Context) {
+	// 		fmt.Println(3)
+	// 		ctx.Next()
+	// 		fmt.Println(4)
+	// 	}
+	// })())
 
 	Router.GET("/", func(ctx *gin.Context) {
 		ctx.String(http.StatusOK, "index")
@@ -28,22 +42,8 @@ func SetupRouter() {
 		ctx.String(http.StatusOK, "pong")
 	})
 
-	Router.GET("/test", func(ctx *gin.Context) {
-		session := sessions.Default(ctx)
-		options := sessions.Options{
-			Path:   "/",
-			MaxAge: 604800,
-		}
-		session.Options(options)
-		err := session.Save()
-		if err != nil {
-			fmt.Println(err)
-		}
-		fmt.Println(session)
-		ctx.JSON(200, gin.H{
-			"msg": "success",
-		})
-	})
+	Router.GET("/test", Jwt.UseJwt)
+	Router.GET("/parse", Jwt.ParseJwt)
 
 	UserRouter("user")
 	ManagerRouter("manager")

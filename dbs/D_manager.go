@@ -1,6 +1,7 @@
 package dbs
 
 import (
+	"fmt"
 	"time"
 )
 
@@ -19,5 +20,6 @@ func (self *DbManger) QueryAllManager() (manager DbManger, err error) {
 	db := DB
 
 	db = db.First(&manager)
+	fmt.Println(manager)
 	return
 }
